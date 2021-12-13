@@ -9,6 +9,51 @@
     <link href="https://cdn.maptiler.com/maptiler-geocoder/v1.1.0/maptiler-geocoder.css" rel="stylesheet" />
     <link rel="stylesheet" href="../css/home.css">
 
+    <script>
+        var cacheOriginCoordinates;
+        var cacheDestinationCoordinates;
+
+        function getCoordinatesFromApiResponse(answer) {
+            return answer.geometry.coordinates
+        }
+
+        function calculateAirdistanceBetweenPoints(origin, destination) {
+
+            var lat1 = origin[1]
+            var lat2 = destination[1]
+
+            var lon1 = origin[0]
+            var lon2 = destination[0]
+
+            //formula from: https://www.movable-type.co.uk/scripts/latlong.html
+
+
+            console.log("moi")
+
+            const R = 6371e3; // metres
+            const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+            return R * c / 1000; // in kilometres
+
+        }
+
+        function btnOnClick() {
+            if (searchOrigin.value.length == 0 || searchDestination.value.length == 0) {
+                alert("please select origin and destination first");
+            } else {
+                distanceBetweenPoints = calculateAirdistanceBetweenPoints(cacheOriginCoordinates, cacheDestinationCoordinates);
+                console.log("distance in kilometers: ", distanceBetweenPoints)
+            }
+        }
+    </script>
 
 
     <title>Home</title>
@@ -19,47 +64,38 @@
     <p></p>
 
     <p id="iptOrigin">Origin
-        <input id="search" type="text" />
+        <input id="searchOrigin" type="text" />
         <script>
             var geocoder = new maptiler.Geocoder({
-                input: 'search', // id of input element
+                input: 'searchOrigin', // id of input element
                 key: '7BnnMS5rx1FWcuNwBzgU'
             });
             geocoder.on('select', function(item) {
-                console.log('Selected', item);
+                document.getElementById("searchOrigin").value = item.place_name;
+                cacheOriginCoordinates = getCoordinatesFromApiResponse(item);
+                console.log("Selected", item)
             });
         </script>
-
     </p>
 
 
     <p id="iptDestionation">Destionation
-        <input id="search" type="text" />
-
+        <input id="searchDestination" type="text" />
+        <script>
+            var geocoder = new maptiler.Geocoder({
+                input: 'searchDestination', // id of input element
+                key: '7BnnMS5rx1FWcuNwBzgU'
+            });
+            geocoder.on('select', function(item) {
+                document.getElementById("searchDestination").value = item.place_name;
+                cacheDestinationCoordinates = getCoordinatesFromApiResponse(item);
+                console.log('Selected', item);
+            });
+        </script>
     </p>
 
 
-    <button class="button-3" role="button" onclick="btnOnClick()" ">Button 3</button>
-
-
-
-
-    <script>
-
-        function btnOnClick(){
-            
-        }
-
-
-
-    </script>
-
-
-
-
-
-
-
+    <button class="button-3" role="button" onclick="btnOnClick()" ">Calculate</button>
 
 
 </body>
