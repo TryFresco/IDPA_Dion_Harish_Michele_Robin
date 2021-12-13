@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://cdn.maptiler.com/maptiler-geocoder/v1.1.0/maptiler-geocoder.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link href="https://cdn.maptiler.com/maptiler-geocoder/v1.1.0/maptiler-geocoder.css" rel="stylesheet" />
     <link rel="stylesheet" href="../css/home.css">
 
@@ -25,10 +26,8 @@
             var lon1 = origin[0]
             var lon2 = destination[0]
 
-            //formula from: https://www.movable-type.co.uk/scripts/latlong.html
-
-
-            console.log("moi")
+            //formula for calculating distance between two points with latitude and longitude (geocoding): 
+            //https://www.movable-type.co.uk/scripts/latlong.html
 
             const R = 6371e3; // metres
             const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
@@ -53,6 +52,23 @@
                 console.log("distance in kilometers: ", distanceBetweenPoints)
             }
         }
+
+        function getAircraftDetails(aircraftType) {
+            const settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": "https://lihcode-lufthansa-open-new-v1.p.rapidapi.com/v1/references/aircraft/33P",
+                "method": "GET",
+                "headers": {
+                    "x-rapidapi-host": "lihcode-lufthansa-open-new-v1.p.rapidapi.com",
+                    "x-rapidapi-key": "024a79657fmsh2d49992b2c4c158p13e413jsnd4325abada65"
+                }
+            };
+
+            $.ajax(settings).done(function(response) {
+                console.log(response);
+            });
+        }
     </script>
 
 
@@ -66,6 +82,8 @@
     <p id="iptOrigin">Origin
         <input id="searchOrigin" type="text" />
         <script>
+            // Geociding API: https://cloud.maptiler.com/geocoding/
+
             var geocoder = new maptiler.Geocoder({
                 input: 'searchOrigin', // id of input element
                 key: '7BnnMS5rx1FWcuNwBzgU'
@@ -96,6 +114,8 @@
 
 
     <button class="button-3" role="button" onclick="btnOnClick()" ">Calculate</button>
+    <br>
+    <button class="button-3 " role="button " onclick="getAircraftDetails( 'B748') ">test</button>
 
 
 </body>
