@@ -4,15 +4,61 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../css/home.css" media="screen" />
-    <script type="text/javascript" src="../js/home.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdn.maptiler.com/maptiler-geocoder/v1.1.0/maptiler-geocoder.js"></script>
+    <link href="https://cdn.maptiler.com/maptiler-geocoder/v1.1.0/maptiler-geocoder.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/home.css">
+
+
+
     <title>Home</title>
 </head>
 
 <body>
 
-    //api für distanz https://maps.googleapis.com/maps/api/distancematrix/json?parameters
+    <p></p>
+
+    <p id="iptOrigin">Origin
+        <input id="search" type="text" />
+        <script>
+            var geocoder = new maptiler.Geocoder({
+                input: 'search', // id of input element
+                key: '7BnnMS5rx1FWcuNwBzgU'
+            });
+            geocoder.on('select', function(item) {
+                console.log('Selected', item);
+            });
+        </script>
+
+    </p>
+
+
+    <p id="iptDestionation">Destionation
+        <input id="search" type="text" />
+
+    </p>
+
+
+    <button class="button-3" role="button" onclick="btnOnClick()" ">Button 3</button>
+
+
+
+
+    <script>
+
+        function btnOnClick(){
+            
+        }
+
+
+
+    </script>
+
+
+
+
+
+
 
 
 
