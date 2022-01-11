@@ -53,22 +53,26 @@
             }
         }
 
-        function getAircraftDetails(aircraftType) {
+        function getCarbonEmissions(origin, destination, via, passengers, roundtrip, flight_class) {
             const settings = {
-                "async": true,
-                "crossDomain": true,
-                "url": "https://lihcode-lufthansa-open-new-v1.p.rapidapi.com/v1/references/aircraft/33P",
-                "method": "GET",
-                "headers": {
-                    "x-rapidapi-host": "lihcode-lufthansa-open-new-v1.p.rapidapi.com",
-                    "x-rapidapi-key": "024a79657fmsh2d49992b2c4c158p13e413jsnd4325abada65"
-                }
-            };
+                "from": origin,
+                "to": destination,
+                "via": via,
+                "passengers": passengers,
+                "roundtrip": roundtrip,
+                "flight_class": flight_class
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "https://api.myclimate.org/v1/flight_calculators.json",
+
+            })
 
             $.ajax(settings).done(function(response) {
                 console.log(response);
             });
-        }
+        };
     </script>
 
 
