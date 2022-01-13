@@ -18,6 +18,7 @@
         var isTwoWayFlight = false
         var compensationCostPerKiloCo2 = 0.0426356 // according to co2.myclimate.org
         var compensationCosts
+        var success = true
 
         function getCo2Emission() {
             orgn = String(document.querySelector("#orgArpt").value)
@@ -185,14 +186,24 @@
 
             $.ajax(settings).done(function(response) {
                 console.log(response);
-                var finalEmissions = response.data.flightOffers[0].itineraries[0].segments[0].co2Emissions[0].weight
-
-                if (isTwoWayFlight == true) {
-                    finalEmissions = finalEmissions * 2
+                try {
+                    var finalEmissions = response.data.flightOffers[0].itineraries[0].segments[0].co2Emissions[0].weight
+                    success = true
+                } catch {
+                    success = false
                 }
-                console.log(finalEmissions)
-                document.getElementById("emissionOutput").innerHTML = "CO2 Emissions for flight: " + finalEmissions + "kg" + "        Compenation costs: " + finalEmissions * compensationCostPerKiloCo2 + " CHF"
-                document.getElementById("linkOutput").innerHTML = "https://www.myclimate.org/"
+
+                if (success == true) {
+
+                    if (isTwoWayFlight == true) {
+                        finalEmissions = finalEmissions * 2
+                    }
+                    console.log(finalEmissions)
+                    document.getElementById("emissionOutput").innerHTML = "CO2 Emissions for flight: " + finalEmissions + "kg" + "        Compenation costs: " + finalEmissions * compensationCostPerKiloCo2 + " CHF"
+                    document.getElementById("linkOutput").innerHTML = "https://www.myclimate.org/"
+                } else {
+                    document.getElementById("emissionOutput").innerHTML = "Error. Try again with other dates."
+                }
             })
 
             .fail(function(response) {
