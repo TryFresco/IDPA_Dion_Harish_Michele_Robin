@@ -110,7 +110,7 @@
 
         function getFlightOffer(origin, destination, departureDate, returnDate, numberOfPassengers, token) {
             var settings = {
-                "url": "https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=" + origin + "&destinationLocationCode=" + destination + "&departureDate=" + departureDate + "&returnDate=" + returnDate + "&adults=" + numberOfPassengers + "&max=3",
+                "url": "https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=" + origin + "&destinationLocationCode=" + destination + "&departureDate=" + departureDate + "&returnDate=" + returnDate + "&adults=1&max=3",
                 "method": "GET",
                 "timeout": 0,
                 "headers": {
@@ -137,20 +137,74 @@
 
 
         function flightOffersPricing(token, data) {
+            console.log(data)
             var settings = {
-                "url": "https://test.api.amadeus.com/v1/shopping/flight-offers/pricing",
+                "url": "https://test.api.amadeus.com/v1/booking/flight-orders",
                 "method": "POST",
                 "timeout": 0,
                 "headers": {
                     "Content-Type": "application/json",
-                    "X-HTTP-Method-Override": "GET",
                     "Authorization": "Bearer " + token
                 },
                 "data": JSON.stringify({
                     "data": {
-                        "type": "flight-offers-pricing",
-                        "flightOffers": [{
-                            data
+                        "type": "flight-order",
+                        "flightOffers": [
+                            data[0]
+                        ],
+
+                        "travelers": [{
+                            "id": "1",
+                            "dateOfBirth": "2012-10-11",
+                            "gender": "FEMALE",
+                            "contact": {
+                                "emailAddress": "jorge.gonzales833@telefonica.es",
+                                "phones": [{
+                                    "deviceType": "MOBILE",
+                                    "countryCallingCode": "34",
+                                    "number": "480080076"
+                                }]
+                            },
+                            "name": {
+                                "firstName": "ADRIANA",
+                                "lastName": "GONZALES"
+                            }
+                        }],
+                        "remarks": {
+                            "general": [{
+                                "subType": "GENERAL_MISCELLANEOUS",
+                                "text": "ONLINE BOOKING FROM INCREIBLE VIAJES"
+                            }]
+                        },
+                        "ticketingAgreement": {
+                            "option": "DELAY_TO_CANCEL",
+                            "delay": "6D"
+                        },
+                        "contacts": [{
+                            "addresseeName": {
+                                "firstName": "PABLO",
+                                "lastName": "RODRIGUEZ"
+                            },
+                            "companyName": "INCREIBLE VIAJES",
+                            "purpose": "STANDARD",
+                            "phones": [{
+                                "deviceType": "LANDLINE",
+                                "countryCallingCode": "34",
+                                "number": "480080071"
+                            }, {
+                                "deviceType": "MOBILE",
+                                "countryCallingCode": "33",
+                                "number": "480080072"
+                            }],
+                            "emailAddress": "support@increibleviajes.es",
+                            "address": {
+                                "lines": [
+                                    "Calle Prado, 16"
+                                ],
+                                "postalCode": "28014",
+                                "cityName": "Madrid",
+                                "countryCode": "ES"
+                            }
                         }]
                     }
                 }),
