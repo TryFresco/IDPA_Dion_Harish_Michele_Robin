@@ -31,8 +31,18 @@
                 if (retD !== "") {
                     isTwoWayFlight = true
                 }
-                document.getElementById("emissionOutput").innerHTML = "loading..."
-                getNewToken()
+                if (depD >= retD) {
+                    alert("Retour date cannot be earlier than departure date")
+                } else {
+
+                    if (new Date().toISOString().slice(0, 10) > depD || new Date().toISOString().slice(0, 10) > retD) {
+                        alert("Travel date cannot be earlier than current date.")
+                    } else {
+
+                        document.getElementById("emissionOutput").innerHTML = "loading..."
+                        getNewToken()
+                    }
+                }
             }
 
         }
@@ -81,18 +91,21 @@
             $.ajax(settings).done(function(response) {
 
 
-                var flightOfferData = response.data
+                    var flightOfferData = response.data
 
-                console.log(flightOfferData)
+                    console.log(flightOfferData)
 
-                flightOffersPricing(token, flightOfferData)
+                    flightOffersPricing(token, flightOfferData)
 
-                /*
-                var relevantData = response.data
+                    /*
+                    var relevantData = response.data
 
-                return relevantData;
-                */
-            });
+                    return relevantData;
+                    */
+                })
+                .fail(function(reponse, error) {
+                    document.getElementById("emissionOutput").innerHTML = "Something went wrong, try again. Error: " + error
+                });
         }
 
 
@@ -180,7 +193,13 @@
                 console.log(finalEmissions)
                 document.getElementById("emissionOutput").innerHTML = "CO2 Emissions for flight: " + finalEmissions + "kg" + "        Compenation costs: " + finalEmissions * compensationCostPerKiloCo2 + " CHF"
                 document.getElementById("linkOutput").innerHTML = "https://www.myclimate.org/"
-            });
+            })
+
+            .fail(function(response) {
+                document.getElementById("emissionOutput").innerHTML = "Request failed, there are no flights available for these dates. Choose other dates."
+            })
+
+
         }
 
         function btnOnClick() {
