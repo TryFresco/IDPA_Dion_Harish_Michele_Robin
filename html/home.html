@@ -26,22 +26,22 @@
             depD = String(document.querySelector('#depDate').value)
             retD = String(document.querySelector('#retDate').value)
 
-            if (orgn === "" || dest === "" || depD === "" || retD === "") {
+            if (orgn === "" || dest === "" || depD === "" || retD === "") { //checks for empty input fields
                 alert("Please fill in every field")
             } else {
-                if (retD !== "") {
+                if (retD !== "") { //checks, if it is one- or two way
                     isTwoWayFlight = true
                 }
-                if (depD >= retD) {
+                if (depD >= retD) { //checks, if the departure date is earlier than the date you want to flight back
                     alert("Retour date cannot be earlier than departure date")
                 } else {
 
-                    if (new Date().toISOString().slice(0, 10) > depD || new Date().toISOString().slice(0, 10) > retD) {
+                    if (new Date().toISOString().slice(0, 10) > depD || new Date().toISOString().slice(0, 10) > retD) { //checks if date of journey is ealrier than the current date
                         alert("Travel date cannot be earlier than current date.")
                     } else {
 
-                        document.getElementById("emissionOutput").innerHTML = "loading..."
-                        getNewToken()
+                        document.getElementById("emissionOutput").innerHTML = "loading..." //sets status to loading
+                        getNewToken() //starts the whole progress. First step ist requesting the Token
                     }
                 }
             }
@@ -59,58 +59,48 @@
                 },
                 "data": {
                     "grant_type": "client_credentials",
-                    "client_id": "Yxs2IrBtYmbigUIpgFr5WaUnXLp7Njft",
-                    "client_secret": "XNWRKO8Gw0cgLsGG"
+                    "client_id": "Yxs2IrBtYmbigUIpgFr5WaUnXLp7Njft", //API Key, please do not reuse as this is a graded school project 
+                    "client_secret": "XNWRKO8Gw0cgLsGG" //another Key for more security
                 }
             };
 
-            $.ajax(settings).done(function(response) {
-                var obj = JSON.parse(JSON.stringify(response))
-                var result = obj.access_token
-                console.log(result)
+            $.ajax(settings).done(function(response) { //requests data
+                var obj = JSON.parse(JSON.stringify(response)) //creates JSON object and converts to string
+                var result = obj.access_token //filters access token
+                console.log(result) //logs result in console for better debugging
 
 
-                getFlightOffer(orgn.toUpperCase(), dest.toUpperCase(), depD, retD, result)
-                    //getFlightOffer(toString(document.getElementById("orgArpt")), toString(document.getElementById("destArpt")), toString(document.getElementById("depDate")), toString(retD = document.getElementById("retDate")), result)
+                getFlightOffer(orgn.toUpperCase(), dest.toUpperCase(), depD, retD, result) //if everything worked out fine, the airport codes are being put to upper case and eventually the next function gets called
+
             });
         }
 
-        function getFlightOffer(origin, destination, departureDate, returnDate, token) {
-            console.log(origin)
+        function getFlightOffer(origin, destination, departureDate, returnDate, token) { //function for requesting possible flights
+            console.log(origin) //logs user inputs for better debugging
             console.log(destination)
             console.log(departureDate)
             console.log(returnDate)
-            var settings = {
+            var settings = { //variable for api variable
                 "url": "https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=" + origin + "&destinationLocationCode=" + destination + "&departureDate=" + departureDate + "&returnDate=" + returnDate + "&adults=1&max=3",
                 "method": "GET",
                 "timeout": 0,
                 "headers": {
-                    "Authorization": "Bearer " + token
+                    "Authorization": "Bearer " + token //recently aquired token
                 },
             };
 
             $.ajax(settings).done(function(response) {
-
-
                     var flightOfferData = response.data
-
-                    console.log(flightOfferData)
-
-                    flightOffersPricing(token, flightOfferData)
-
-                    /*
-                    var relevantData = response.data
-
-                    return relevantData;
-                    */
+                    console.log(flightOfferData) // logs data for better debugging
+                    flightOffersPricing(token, flightOfferData) //calls next function
                 })
-                .fail(function(reponse, error) {
+                .fail(function(reponse, error) { //catches possible errors 
                     document.getElementById("emissionOutput").innerHTML = "Something went wrong, try again. Error: " + error
                 });
         }
 
 
-        function flightOffersPricing(token, data) {
+        function flightOffersPricing(token, data) { //function for more details about the specifc flight (POST request)
             console.log(data)
             var settings = {
                 "url": "https://test.api.amadeus.com/v1/booking/flight-orders",
@@ -124,10 +114,10 @@
                     "data": {
                         "type": "flight-order",
                         "flightOffers": [
-                            data[0]
+                            data[0] //recently aquired data from previous function
                         ],
 
-                        "travelers": [{
+                        "travelers": [{ //phantom person, because the API Service requests a traveler
                             "id": "1",
                             "dateOfBirth": "2012-10-11",
                             "gender": "FEMALE",
@@ -184,10 +174,10 @@
                 }),
             };
 
-            $.ajax(settings).done(function(response) {
-                console.log(response);
+            $.ajax(settings).done(function(response) { //data is being sent
+                console.log(response); //again, response gets logged for better debugging
                 try {
-                    var finalEmissions = response.data.flightOffers[0].itineraries[0].segments[0].co2Emissions[0].weight
+                    var finalEmissions = response.data.flightOffers[0].itineraries[0].segments[0].co2Emissions[0].weight //finally, CO2 emissions get extracted, if successful
                     success = true
                 } catch {
                     success = false
@@ -200,7 +190,7 @@
                     }
                     console.log(finalEmissions)
                     document.getElementById("emissionOutput").innerHTML = "CO2 Emissions for flight: " + finalEmissions + "kg" + "        Compenation costs: " + finalEmissions * compensationCostPerKiloCo2 + " CHF"
-                    document.getElementById("linkOutput").innerHTML = "https://www.myclimate.org/"
+                    document.getElementById("linkOutput").innerHTML = "https://www.myclimate.org/" //this and line above: output of emissions and price for compensation
                 } else {
                     document.getElementById("emissionOutput").innerHTML = "Error. Try again with other dates."
                 }
@@ -213,14 +203,9 @@
 
         }
 
-        function btnOnClick() {
+        function btnOnClick() { //gets called when button is being pressed
             getCo2Emission()
         }
-
-        // const btn = document.querySelector(".button");
-
-        // btn.classList.add("button--loading");
-        // btn.classList.remove("button--loading");
     </script>
 
     <title>Home</title>
