@@ -212,6 +212,8 @@
 
             $.ajax(settings).done(function(response) {
                 console.log(response);
+                console.log("CO2 Emissions for flight: " + response.data.flightOffers[0].itineraries[0].segments[0].co2Emissions[0].weight + "kg")
+
             });
         }
 
@@ -240,8 +242,7 @@
         }
 
         function btnOnClickTest() {
-            var co2Emission = getCo2Emission()
-            console.log(co2Emission)
+            getCo2Emission()
         }
     </script>
 
