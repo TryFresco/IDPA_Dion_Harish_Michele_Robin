@@ -11,82 +11,198 @@
     <link rel="stylesheet" href="../css/home.css">
 
     <script>
-        var cacheOriginCoordinates;
-        var cacheDestinationCoordinates;
-
-        function getCoordinatesFromApiResponse(answer) {
-            return answer.geometry.coordinates
-        }
-
-        function calculateAirdistanceBetweenPoints(origin, destination) {
-
-            var lat1 = origin[1]
-            var lat2 = destination[1]
-
-            var lon1 = origin[0]
-            var lon2 = destination[0]
-
-            //formula for calculating distance between two points with latitude and longitude (geocoding): 
-            //https://www.movable-type.co.uk/scripts/latlong.html
-
-            const R = 6371e3; // metres
-            const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
-            const φ2 = lat2 * Math.PI / 180;
-            const Δφ = (lat2 - lat1) * Math.PI / 180;
-            const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                Math.cos(φ1) * Math.cos(φ2) *
-                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-            return R * c / 1000; // in kilometres
+        function getCo2Emission() {
+            //for test usage there are already values inserted
+            var token = getNewToken()
 
         }
 
-        function btnOnClick() {
-            if (searchOrigin.value.length == 0 || searchDestination.value.length == 0) {
-                alert("please select origin and destination first");
-            } else {
-                distanceBetweenPoints = calculateAirdistanceBetweenPoints(cacheOriginCoordinates, cacheDestinationCoordinates);
-                console.log("distance in kilometers: ", distanceBetweenPoints)
-            }
+        /*
+                                var cacheOriginCoordinates;
+                                var cacheDestinationCoordinates;
+
+                                function getCoordinatesFromApiResponse(answer) {
+                                    return answer.geometry.coordinates
+                                }
+
+                                function calculateAirdistanceBetweenPoints(origin, destination) {
+
+                                    var lat1 = origin[1]
+                                    var lat2 = destination[1]
+
+                                    var lon1 = origin[0]
+                                    var lon2 = destination[0]
+
+                                    //formula for calculating distance between two points with latitude and longitude (geocoding): 
+                                    //https://www.movable-type.co.uk/scripts/latlong.html
+
+                                    const R = 6371e3; // metres
+                                    const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
+                                    const φ2 = lat2 * Math.PI / 180;
+                                    const Δφ = (lat2 - lat1) * Math.PI / 180;
+                                    const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+                                    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                                        Math.cos(φ1) * Math.cos(φ2) *
+                                        Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+                                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+                                    return R * c / 1000; // in kilometres
+
+                                }
+
+                                function btnOnClick() {
+                                    if (searchOrigin.value.length == 0 || searchDestination.value.length == 0) {
+                                        alert("please select origin and destination first");
+                                    } else {
+                                        distanceBetweenPoints = calculateAirdistanceBetweenPoints(cacheOriginCoordinates, cacheDestinationCoordinates);
+                                        console.log("distance in kilometers: ", distanceBetweenPoints)
+                                    }
+                                }
+
+                                
+
+                                function getCarbonEmissions(origin, destination, via, passengers, roundtrip, flight_class) {
+                                    const settings = {
+                                        "from": origin,
+                                        "to": destination,
+                                        "via": via,
+                                        "passengers": passengers,
+                                        "roundtrip": roundtrip,
+                                        "flight_class": flight_class
+                                    }
+
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "https://api.myclimate.org/v1/flight_calculators.json",
+
+                                    })
+
+                                    $.ajax(settings).done(function(response) {
+                                        console.log(response);
+                                    });
+                                };
+
+                                */
+
+        function getNewToken() {
+            var settings = {
+                "url": "https://test.api.amadeus.com/v1/security/oauth2/token",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                "data": {
+                    "grant_type": "client_credentials",
+                    "client_id": "Yxs2IrBtYmbigUIpgFr5WaUnXLp7Njft",
+                    "client_secret": "XNWRKO8Gw0cgLsGG"
+                }
+            };
+
+            $.ajax(settings).done(function(response) {
+                var obj = JSON.parse(JSON.stringify(response))
+                var result = obj.access_token
+                console.log(result)
+                getFlightOffer("ZRH", "LON", "2022-03-04", "2022-04-05", "1", result)
+            });
         }
 
-        function getCarbonEmissions(origin, destination, via, passengers, roundtrip, flight_class) {
-            const settings = {
-                "from": origin,
-                "to": destination,
-                "via": via,
-                "passengers": passengers,
-                "roundtrip": roundtrip,
-                "flight_class": flight_class
-            }
+        function getFlightOffer(origin, destination, departureDate, returnDate, numberOfPassengers, token) {
+            var settings = {
+                "url": "https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=" + origin + "&destinationLocationCode=" + destination + "&departureDate=" + departureDate + "&returnDate=" + returnDate + "&adults=" + numberOfPassengers + "&max=3",
+                "method": "GET",
+                "timeout": 0,
+                "headers": {
+                    "Authorization": "Bearer " + token
+                },
+            };
 
-            $.ajax({
-                type: "POST",
-                url: "https://api.myclimate.org/v1/flight_calculators.json",
+            $.ajax(settings).done(function(response) {
 
-            })
+
+                var flightOfferData = response.data
+
+                console.log(flightOfferData)
+
+                flightOffersPricing(token, flightOfferData)
+
+                /*
+                var relevantData = response.data
+
+                return relevantData;
+                */
+            });
+        }
+
+
+        function flightOffersPricing(token, data) {
+            var settings = {
+                "url": "https://test.api.amadeus.com/v1/shopping/flight-offers/pricing",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/json",
+                    "X-HTTP-Method-Override": "GET",
+                    "Authorization": "Bearer " + token
+                },
+                "data": JSON.stringify({
+                    "data": {
+                        "type": "flight-offers-pricing",
+                        "flightOffers": [{
+                            data
+                        }]
+                    }
+                }),
+            };
 
             $.ajax(settings).done(function(response) {
                 console.log(response);
             });
-        };
-    </script>
+        }
 
+        function getFlightOrders(token, data) {
+            var settings = {
+                "url": "https://test.api.amadeus.com/v1/booking/flight-orders",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                "data": JSON.stringify({
+                    "data": {
+                        "type": "flight-order",
+                        "flightOffers": [{
+                            data
+                        }]
+                    }
+                })
+            };
+
+            $.ajax(settings).done(function(response) {
+                console.log(response)
+            });
+        }
+
+        function btnOnClickTest() {
+            var co2Emission = getCo2Emission()
+            console.log(co2Emission)
+        }
+    </script>
 
     <title>Home</title>
 </head>
 
 <body>
 
+    /*
     <p></p>
 
     <p id="iptOrigin">Origin
         <input id="searchOrigin" type="text" />
         <script>
-            // Geociding API: https://cloud.maptiler.com/geocoding/
+            //Geociding API: https://cloud.maptiler.com/geocoding/
 
             var geocoder = new maptiler.Geocoder({
                 input: 'searchOrigin', // id of input element
@@ -114,12 +230,16 @@
                 console.log('Selected', item);
             });
         </script>
+
+
+
+
     </p>
 
 
     <button class="button-3" role="button" onclick="btnOnClick()" ">Calculate</button>
     <br>
-    <button class="button-3 " role="button " onclick="getAircraftDetails( 'B748') ">test</button>
+    <button class="button-3 " role="button " onclick="btnOnClickTest() ">test</button>
 
 
 </body>
