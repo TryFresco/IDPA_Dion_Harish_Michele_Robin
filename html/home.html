@@ -11,79 +11,25 @@
     <link rel="stylesheet" href="../css/home.css">
 
     <script>
+        var orgn
+        var dest
+        var depD
+        var retD
+
         function getCo2Emission() {
-            //for test usage there are already values inserted
-            var token = getNewToken()
+            orgn = String(document.querySelector("#orgArpt").value)
+            dest = String(document.querySelector('#destArpt').value)
+            depD = String(document.querySelector('#depDate').value)
+            retD = String(document.querySelector('#retDate').value)
+
+            if (orgn === "" || dest === "" || depD === "" || retD === "") {
+                alert("Please fill in every field")
+            } else {
+                getNewToken()
+            }
 
         }
 
-        /*
-                                var cacheOriginCoordinates;
-                                var cacheDestinationCoordinates;
-
-                                function getCoordinatesFromApiResponse(answer) {
-                                    return answer.geometry.coordinates
-                                }
-
-                                function calculateAirdistanceBetweenPoints(origin, destination) {
-
-                                    var lat1 = origin[1]
-                                    var lat2 = destination[1]
-
-                                    var lon1 = origin[0]
-                                    var lon2 = destination[0]
-
-                                    //formula for calculating distance between two points with latitude and longitude (geocoding): 
-                                    //https://www.movable-type.co.uk/scripts/latlong.html
-
-                                    const R = 6371e3; // metres
-                                    const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
-                                    const φ2 = lat2 * Math.PI / 180;
-                                    const Δφ = (lat2 - lat1) * Math.PI / 180;
-                                    const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-                                    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                                        Math.cos(φ1) * Math.cos(φ2) *
-                                        Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-                                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-                                    return R * c / 1000; // in kilometres
-
-                                }
-
-                                function btnOnClick() {
-                                    if (searchOrigin.value.length == 0 || searchDestination.value.length == 0) {
-                                        alert("please select origin and destination first");
-                                    } else {
-                                        distanceBetweenPoints = calculateAirdistanceBetweenPoints(cacheOriginCoordinates, cacheDestinationCoordinates);
-                                        console.log("distance in kilometers: ", distanceBetweenPoints)
-                                    }
-                                }
-
-                                
-
-                                function getCarbonEmissions(origin, destination, via, passengers, roundtrip, flight_class) {
-                                    const settings = {
-                                        "from": origin,
-                                        "to": destination,
-                                        "via": via,
-                                        "passengers": passengers,
-                                        "roundtrip": roundtrip,
-                                        "flight_class": flight_class
-                                    }
-
-                                    $.ajax({
-                                        type: "POST",
-                                        url: "https://api.myclimate.org/v1/flight_calculators.json",
-
-                                    })
-
-                                    $.ajax(settings).done(function(response) {
-                                        console.log(response);
-                                    });
-                                };
-
-                                */
 
         function getNewToken() {
             var settings = {
@@ -104,11 +50,18 @@
                 var obj = JSON.parse(JSON.stringify(response))
                 var result = obj.access_token
                 console.log(result)
-                getFlightOffer("ZRH", "LON", "2022-03-04", "2022-04-05", "1", result)
+
+
+                getFlightOffer(orgn.toUpperCase(), dest.toUpperCase(), depD, retD, result)
+                    //getFlightOffer(toString(document.getElementById("orgArpt")), toString(document.getElementById("destArpt")), toString(document.getElementById("depDate")), toString(retD = document.getElementById("retDate")), result)
             });
         }
 
-        function getFlightOffer(origin, destination, departureDate, returnDate, numberOfPassengers, token) {
+        function getFlightOffer(origin, destination, departureDate, returnDate, token) {
+            console.log(origin)
+            console.log(destination)
+            console.log(departureDate)
+            console.log(returnDate)
             var settings = {
                 "url": "https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=" + origin + "&destinationLocationCode=" + destination + "&departureDate=" + departureDate + "&returnDate=" + returnDate + "&adults=1&max=3",
                 "method": "GET",
@@ -217,31 +170,9 @@
             });
         }
 
-        function getFlightOrders(token, data) {
-            var settings = {
-                "url": "https://test.api.amadeus.com/v1/booking/flight-orders",
-                "method": "POST",
-                "timeout": 0,
-                "headers": {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + token
-                },
-                "data": JSON.stringify({
-                    "data": {
-                        "type": "flight-order",
-                        "flightOffers": [{
-                            data
-                        }]
-                    }
-                })
-            };
 
-            $.ajax(settings).done(function(response) {
-                console.log(response)
-            });
-        }
 
-        function btnOnClickTest() {
+        function btnOnClick() {
             getCo2Emission()
         }
     </script>
@@ -251,50 +182,37 @@
 
 <body>
 
-    /*
-    <p></p>
+    <div class="container">
+        <div class="row">
+            <div class="col-2"> </div>
+            <div class="col-2">
+                <input id="orgArpt" class="inputField" type="text" placeholder="Origin Airport">
+            </div>
 
-    <p id="iptOrigin">Origin
-        <input id="searchOrigin" type="text" />
-        <script>
-            //Geociding API: https://cloud.maptiler.com/geocoding/
+            <div class="col-2">
+                <input id="destArpt" class="inputField" type="text" placeholder="Destination Airport">
+            </div>
 
-            var geocoder = new maptiler.Geocoder({
-                input: 'searchOrigin', // id of input element
-                key: '7BnnMS5rx1FWcuNwBzgU'
-            });
-            geocoder.on('select', function(item) {
-                document.getElementById("searchOrigin").value = item.place_name;
-                cacheOriginCoordinates = getCoordinatesFromApiResponse(item);
-                console.log("Selected", item)
-            });
-        </script>
-    </p>
-
-
-    <p id="iptDestionation">Destionation
-        <input id="searchDestination" type="text" />
-        <script>
-            var geocoder = new maptiler.Geocoder({
-                input: 'searchDestination', // id of input element
-                key: '7BnnMS5rx1FWcuNwBzgU'
-            });
-            geocoder.on('select', function(item) {
-                document.getElementById("searchDestination").value = item.place_name;
-                cacheDestinationCoordinates = getCoordinatesFromApiResponse(item);
-                console.log('Selected', item);
-            });
-        </script>
+            <div class="col-2">
+                <input id="depDate" class="inputField" type="date" placeholder="Departure Date">
+            </div>
+            <div class="col-2">
+                <input id="retDate" class="inputField" type="date" placeholder="Retour Date">
+            </div>
+            <div class="col-2"> </div>
+        </div>
+        <br><br>
+        <div class="row">
+            <div class="col-5"></div>
+            <div class="col-2">
+                <button class="button-3 " role="button " onclick="btnOnClick()">Calculate</button>
+            </div>
+            <div class="col-5"></div>
+        </div>
+    </div>
 
 
 
-
-    </p>
-
-
-    <button class="button-3" role="button" onclick="btnOnClick()" ">Calculate</button>
-    <br>
-    <button class="button-3 " role="button " onclick="btnOnClickTest() ">test</button>
 
 
 </body>

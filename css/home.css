@@ -1,5 +1,5 @@
-#itpOrigin {
-    margin-left: 3em;
+body {
+    background-color: black;
 }
 
 
@@ -28,6 +28,7 @@
     touch-action: manipulation;
     vertical-align: middle;
     white-space: nowrap;
+    width: 100%;
 }
 
 .button-3:focus:not(:focus-visible):not(.focus-visible) {
@@ -54,4 +55,31 @@
 .button-3:active {
     background-color: #298e46;
     box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    font-size: 62.5%;
+}
+
+.container {
+    margin-top: 23%;
+}
+
+.inputField {
+    height: 3em;
+    width: 9em;
+    border-radius: 1em;
+    border-color: black;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.col-2 {
+    align-content: center;
 }
