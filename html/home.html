@@ -16,6 +16,8 @@
         var depD
         var retD
         var isTwoWayFlight = false
+        var compensationCostPerKiloCo2 = 0.0426356 // according to co2.myclimate.org
+        var compensationCosts
 
         function getCo2Emission() {
             orgn = String(document.querySelector("#orgArpt").value)
@@ -23,12 +25,13 @@
             depD = String(document.querySelector('#depDate').value)
             retD = String(document.querySelector('#retDate').value)
 
-            if (orgn === "" || dest === "" || depD === "" || ) {
+            if (orgn === "" || dest === "" || depD === "" || retD === "") {
                 alert("Please fill in every field")
             } else {
                 if (retD !== "") {
                     isTwoWayFlight = true
                 }
+                document.getElementById("emissionOutput").innerHTML = "loading..."
                 getNewToken()
             }
 
@@ -174,15 +177,20 @@
                 if (isTwoWayFlight == true) {
                     finalEmissions = finalEmissions * 2
                 }
-
-                console.log("CO2 Emissions for flight: " + finalEmissions + "kg")
-
+                console.log(finalEmissions)
+                document.getElementById("emissionOutput").innerHTML = "CO2 Emissions for flight: " + finalEmissions + "kg" + "        Compenation costs: " + finalEmissions * compensationCostPerKiloCo2 + " CHF"
+                document.getElementById("linkOutput").innerHTML = "https://www.myclimate.org/"
             });
         }
 
         function btnOnClick() {
             getCo2Emission()
         }
+
+        // const btn = document.querySelector(".button");
+
+        // btn.classList.add("button--loading");
+        // btn.classList.remove("button--loading");
     </script>
 
     <title>Home</title>
@@ -213,15 +221,34 @@
         <div class="row">
             <div class="col-5"></div>
             <div class="col-2">
-                <button class="button-3 " role="button " onclick="btnOnClick()">Calculate</button>
+                <p class="pText">*Please do only use 3-letter airport codes such as "ZRH", "SFO" or "LON"!</p>
+            </div>
+            <div class="col-5"></div>
+        </div>
+        <div class="row">
+            <div class="col-5"></div>
+            <div class="col-2">
+                <button class="button-3 button__text" role="button " onclick="btnOnClick()">Calculate</button>
+            </div>
+            <div class="col-5"></div>
+        </div>
+        <br><br><br>
+        <div class="row">
+            <div class="col-5"></div>
+            <div class="col-2">
+                <p id="emissionOutput" class="pText"> </p>
+            </div>
+            <div class="col-5"></div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-5"></div>
+            <div class="col-2">
+                <p id="linkOutput" type="link" class="pText"></p>
             </div>
             <div class="col-5"></div>
         </div>
     </div>
-
-
-
-
 
 </body>
 
