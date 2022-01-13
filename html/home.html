@@ -15,6 +15,7 @@
         var dest
         var depD
         var retD
+        var isTwoWayFlight = false
 
         function getCo2Emission() {
             orgn = String(document.querySelector("#orgArpt").value)
@@ -22,9 +23,12 @@
             depD = String(document.querySelector('#depDate').value)
             retD = String(document.querySelector('#retDate').value)
 
-            if (orgn === "" || dest === "" || depD === "" || retD === "") {
+            if (orgn === "" || dest === "" || depD === "" || ) {
                 alert("Please fill in every field")
             } else {
+                if (retD !== "") {
+                    isTwoWayFlight = true
+                }
                 getNewToken()
             }
 
@@ -165,12 +169,16 @@
 
             $.ajax(settings).done(function(response) {
                 console.log(response);
-                console.log("CO2 Emissions for flight: " + response.data.flightOffers[0].itineraries[0].segments[0].co2Emissions[0].weight + "kg")
+                var finalEmissions = response.data.flightOffers[0].itineraries[0].segments[0].co2Emissions[0].weight
+
+                if (isTwoWayFlight == true) {
+                    finalEmissions = finalEmissions * 2
+                }
+
+                console.log("CO2 Emissions for flight: " + finalEmissions + "kg")
 
             });
         }
-
-
 
         function btnOnClick() {
             getCo2Emission()

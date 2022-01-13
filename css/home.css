@@ -7,12 +7,12 @@ body {
 
 .button-3 {
     appearance: none;
-    background-color: #2ea44f;
+    background-color: #ffffff;
     border: 1px solid rgba(27, 31, 35, .15);
     border-radius: 6px;
     box-shadow: rgba(27, 31, 35, .1) 0 1px 0;
     box-sizing: border-box;
-    color: #fff;
+    color: rgb(0, 0, 0);
     cursor: pointer;
     display: inline-block;
     font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
@@ -37,23 +37,23 @@ body {
 }
 
 .button-3:hover {
-    background-color: #2c974b;
+    background-color: #ffd86d;
 }
 
 .button-3:focus {
-    box-shadow: rgba(46, 164, 79, .4) 0 0 0 3px;
+    box-shadow: rgba(116, 116, 116, 0.4) 0 0 0 3px;
     outline: none;
 }
 
 .button-3:disabled {
-    background-color: #94d3a2;
+    background-color: #8b8b8b;
     border-color: rgba(27, 31, 35, .1);
     color: rgba(255, 255, 255, .8);
     cursor: default;
 }
 
 .button-3:active {
-    background-color: #298e46;
+    background-color: #777777;
     box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
 }
 
@@ -68,7 +68,7 @@ body {
 }
 
 .container {
-    margin-top: 23%;
+    margin-top: 15%;
 }
 
 .inputField {
