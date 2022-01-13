@@ -28,7 +28,7 @@ span a{
 span a:before,
 span a:after{
   position: absolute;
-  content: "BUTTON";
+  content: "GO TO CALCULATOR";
   height: 55px;
   width: 180px;
   display: flex;
